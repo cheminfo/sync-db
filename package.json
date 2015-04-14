@@ -4,7 +4,7 @@
   "description": "SyncDB core - easy synchronization of documents using a REST API",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --require should --reporter mocha-better-spec-reporter --recursive"
+    "test": "mocha --require should --reporter mocha-better-spec-reporter"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,8 @@
   "devDependencies": {
     "mocha": "latest",
     "mocha-better-spec-reporter": "latest",
-    "should": "latest"
+    "should": "latest",
+    "superagent-mock": "^1.0.0"
   },
   "dependencies": {
     "superagent": "^1.2.0"

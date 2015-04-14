@@ -1,14 +1,18 @@
 'use strict';
 
+var request = require('superagent');
+var config = require('./mock/superagent');
+require('superagent-mock')(request, config);
+
 var SyncDB = require('..');
-var SyncIDB = require('sync-db-indexeddb');
+var FakeDriver = require('./mock/driver');
 
 describe('SyncDB', function () {
 
     it('blabla', function () {
         var mySync = new SyncDB({
-            driver: SyncIDB({name: 'mydb'}),
-            prefix: 'http://localhost/api'
+            driver: new FakeDriver(),
+            prefix: 'http://localhost:1234/v1.2.0/prod/'
         });
 
         var data1Sync = mySync.sync('data1');

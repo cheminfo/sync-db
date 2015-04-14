@@ -29,5 +29,8 @@
     "mocha": "latest",
     "mocha-better-spec-reporter": "latest",
     "should": "latest"
+  },
+  "dependencies": {
+    "superagent": "^1.2.0"
   }
 }

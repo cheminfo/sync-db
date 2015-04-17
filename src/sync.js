@@ -13,38 +13,40 @@ function Sync(driver, url) {
     this._inserted = 0;
     this._limit = 5;
     var self = this;
-    driver.init().then(function () {
-        self._start();
-    }, function (e) {
+    this._promise = driver.init().then(function () {
+        return self._start();
+    });
+    this._promise.catch(function (e) {
         self.emit('error', e);
     });
+    this.then = this._promise.then;
 }
 
 Util.inherits(Sync, EventEmitter);
 
 Sync.prototype._start = function () {
     var self = this;
-    this._driver.getLastSeq().then(function (id) {
-        self._seqid = id;
-        var infoUrl = self._url + '/info?since=' + id;
-        agent.get(infoUrl).end(function (err, result) {
-            if (err) return self.emit('error', err);
-            self.emit('progress', {
-                type: 'info',
-                value: result.body
+    return this._driver.getLastSeq().then(function (id) {
+        return new Promise(function (resolve, reject) {
+            self._seqid = id;
+            var infoUrl = self._url + '/info?since=' + id;
+            agent.get(infoUrl).end(function (err, result) {
+                if (err) return reject(err);
+                self.emit('progress', {
+                    type: 'info',
+                    value: result.body
+                });
+                self._fetch(resolve, reject);
             });
-            self._fetch();
         });
-    }).catch(function (err) {
-        self.emit('error', err);
     });
 };
 
-Sync.prototype._fetch = function () {
+Sync.prototype._fetch = function (resolve, reject) {
     var self = this;
     var url = this._url + '?since=' + this._seqid + '&limit=' + this._limit;
     agent.get(url).end(function (err, response) {
-        if (err) return self.emit('error', err);
+        if (err) return reject(err);
         var result = response.body.data;
         var i = 0;
         insert();
@@ -60,13 +62,13 @@ Sync.prototype._fetch = function () {
                         value: res.value
                     });
                     insert();
-                }, function (err) {
-                    self.emit('error', err);
-                });
+                }, reject);
             } else if (result.length === 0) {
-                self.emit('end', {
+                var resInfo = {
                     inserted: self._inserted
-                });
+                };
+                self.emit('end', resInfo);
+                resolve(resInfo);
             } else {
                 self._fetch();
             }

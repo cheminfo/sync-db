@@ -9,28 +9,36 @@ var FakeDriver = require('./mock/driver');
 
 describe('SyncDB', function () {
 
-    it('blabla', function () {
+    it('should sync', function (done) {
         var mySync = new SyncDB({
             driver: new FakeDriver(),
-            prefix: 'http://localhost:1234/v1.2.0/prod/'
+            prefix: '/api/'
         });
 
-        var data1Sync = mySync.sync('data1');
+        var inserted = 0;
+        var info = false;
 
-        data1Sync.on('end', function (result) {
+        var dataSync = mySync.sync('collection');
 
+        dataSync.on('end', function (result) {
+            result.inserted.should.equal(inserted);
+            info.should.be.true;
+            done();
         });
-        data1Sync.on('progress', function () {
-
+        dataSync.on('progress', function (infos) {
+            if (infos.type === 'info') {
+                info = true;
+            } else if (infos.type === 'insert') {
+                inserted++;
+            }
         });
-        data1Sync.on('error', function () {
-
+        dataSync.on('error', function (e) {
+            done(e);
         });
-        data1Sync.on('conflict', function (localDoc, remoteDoc, resolve) {
+        /*dataSync.on('conflict', function (localDoc, remoteDoc, resolve) {
 
-        });
+        });*/
 
-        var data2Sync = mySync.sync('data2');
     });
 
 });

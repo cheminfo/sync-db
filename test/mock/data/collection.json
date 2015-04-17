@@ -1,6 +1,6 @@
 [
-  {"seqid": 1},
-  {"seqid": 2},
-  {"seqid": 3},
-  {"seqid": 6}
+  {"seqid": 1, "id": "1", "value": {"id": "1", "field1": "value1"}},
+  {"seqid": 2, "id": "2", "value": {"id": "2", "field1": "value2"}},
+  {"seqid": 3, "id": "3", "value": {"id": "3", "field1": "value3"}},
+  {"seqid": 6, "id": "4", "value": {"id": "4", "field1": "value4"}}
 ]

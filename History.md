@@ -1,4 +1,4 @@
-1.0.0 / HEAD
-============
+0.0.1 / 2015-04-27
+==================
 
-* first release
+* first experimental version

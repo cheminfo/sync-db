@@ -12,13 +12,13 @@ describe('SyncDB', function () {
     it('should sync', function (done) {
         var mySync = new SyncDB({
             driver: new FakeDriver(),
-            prefix: '/api/'
+            url: '/api/collection'
         });
 
         var inserted = 0;
         var info = false;
 
-        var dataSync = mySync.sync('collection');
+        var dataSync = mySync.sync();
 
         dataSync.on('end', function (result) {
             result.inserted.should.equal(inserted);

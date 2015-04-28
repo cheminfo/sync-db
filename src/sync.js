@@ -19,7 +19,7 @@ function Sync(driver, url) {
     this._promise.catch(function (e) {
         self.emit('error', e);
     });
-    this.then = this._promise.then;
+    this.then = this._promise.then.bind(this._promise);
 }
 
 Util.inherits(Sync, EventEmitter);

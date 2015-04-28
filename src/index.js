@@ -1,42 +1,39 @@
 'use strict';
 
-var Url = require('url');
-
 var Sync = require('./sync');
 
 function SyncDB(options) {
-    if (!(this instanceof SyncDB))
+    if (!(this instanceof SyncDB)) {
         return new SyncDB(options);
+    }
 
-    if (typeof options !== 'object' || options === null)
+    if (typeof options !== 'object' || options === null) {
         throw new TypeError('options argument must be an object');
-    if (typeof options.driver !== 'object')
+    }
+    if (typeof options.driver !== 'object') {
         throw new TypeError('driver option must be an object');
+    }
 
     this._driver = options.driver;
-    this._prefix = options.prefix ? options.prefix : '';
+    this._url = options.url ? options.url : '';
 
-    this._exec = new Map();
+    this._exec = null;
 }
 
-SyncDB.prototype.sync = function (url) {
-    url = Url.resolve(this._prefix, url);
-    if (this._exec.has(url))
-        return this._exec.get(url);
-    var exec = new Sync(this._driver, url);
-    this._exec.set(url, exec);
+SyncDB.prototype.sync = function () {
+    if (this._exec) {
+        return this._exec;
+    }
+    var exec = new Sync(this._driver, this._url);
+    this._exec = exec;
 
     var self = this;
-    var removed = false;
-    function remove() {
-        if (!removed) {
-            self._exec.delete(url);
-            removed = true;
-        }
-    }
-    exec.on('error', remove);
-    exec.on('end', remove);
 
+    function remove() {
+        self._exec = null;
+    }
+
+    exec.then(remove);
     return exec;
 };
 

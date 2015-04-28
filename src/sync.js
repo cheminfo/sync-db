@@ -70,10 +70,10 @@ Sync.prototype._fetch = function (resolve, reject) {
                 self.emit('end', resInfo);
                 resolve(resInfo);
             } else {
-                self._fetch();
+                self._fetch(resolve, reject);
             }
         }
-    })
+    });
 };
 
 module.exports = Sync;

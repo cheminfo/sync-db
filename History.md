@@ -1,3 +1,10 @@
+0.0.4 / 2015-04-29
+==================
+
+* driver.init should be a Promise instead of a function returning one.
+* added limit option for sync (default: 5)
+* separate progress and info events
+
 0.0.3 / 2015-04-28
 ==================
 

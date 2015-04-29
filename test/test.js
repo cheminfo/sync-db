@@ -25,12 +25,11 @@ describe('SyncDB', function () {
             info.should.be.true;
             done();
         });
-        dataSync.on('progress', function (infos) {
-            if (infos.type === 'info') {
-                info = true;
-            } else if (infos.type === 'insert') {
-                inserted++;
-            }
+        dataSync.on('info', function () {
+            info = true;
+        });
+        dataSync.on('progress', function () {
+            inserted++;
         });
         dataSync.on('error', function (e) {
             done(e);

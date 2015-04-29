@@ -20,11 +20,12 @@ function SyncDB(options) {
     this._exec = null;
 }
 
-SyncDB.prototype.sync = function () {
+SyncDB.prototype.sync = function (options) {
     if (this._exec) {
         return this._exec;
     }
-    var exec = new Sync(this._driver, this._url);
+    options = options || {};
+    var exec = new Sync(this._driver, this._url, options.limit);
     this._exec = exec;
 
     var self = this;

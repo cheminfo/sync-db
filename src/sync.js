@@ -5,15 +5,15 @@ var EventEmitter = require('events').EventEmitter;
 
 var agent = require('superagent');
 
-function Sync(driver, url) {
+function Sync(driver, url, limit) {
     EventEmitter.call(this);
     this._driver = driver;
     this._url = url;
     this._seqid = 0;
     this._inserted = 0;
-    this._limit = 5;
+    this._limit = limit || 5;
     var self = this;
-    this._promise = driver.init().then(function () {
+    this._promise = driver.init.then(function () {
         return self._start();
     });
     this._promise.catch(function (e) {
@@ -32,10 +32,7 @@ Sync.prototype._start = function () {
             var infoUrl = self._url + '/info?since=' + id;
             agent.get(infoUrl).end(function (err, result) {
                 if (err) return reject(err);
-                self.emit('progress', {
-                    type: 'info',
-                    value: result.body
-                });
+                self.emit('info', result.body);
                 self._fetch(resolve, reject);
             });
         });
@@ -57,10 +54,7 @@ Sync.prototype._fetch = function (resolve, reject) {
                 self._driver.insert(res).then(function () {
                     self._seqid = res.seqid;
                     self._inserted++;
-                    self.emit('progress', {
-                        type: 'insert',
-                        value: res.value
-                    });
+                    self.emit('progress', res);
                     insert();
                 }, reject);
             } else if (result.length === 0) {

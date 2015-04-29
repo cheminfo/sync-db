@@ -5,9 +5,7 @@ function FakeDriver() {
     this._data = [];
 }
 
-FakeDriver.prototype.init = function () {
-    return Promise.resolve();
-};
+FakeDriver.prototype.init = Promise.resolve();
 
 FakeDriver.prototype.getLastSeq = function () {
     return Promise.resolve(this._lastSeq);

@@ -12,10 +12,9 @@ function Sync(driver, url, limit) {
     this._seqid = 0;
     this._inserted = 0;
     this._limit = limit || 5;
+
+    this._promise = this._start();
     var self = this;
-    this._promise = driver.init.then(function () {
-        return self._start();
-    });
     this._promise.catch(function (e) {
         self.emit('error', e);
     });

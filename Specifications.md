@@ -22,9 +22,9 @@ The server is always the master and it decides if the data being sent is valid o
 #### Handle POST request
 
 1. Let *body* be the result of parsing the request data as a JSON.
-2. If parsing fails, return failure.
-3. If *body* is not an object, return failure.
-4. If *body* does not contain `id`, `date` and `value` fields, return failure.
+2. If parsing fails, return failure (400).
+3. If *body* is not an object, return failure (400).
+4. If *body* does not contain `id`, `date` and `value` fields, return failure (400).
 5. Let *doc* be the result of searching a local document with *body.id*.
 6. If *doc* is null, run these substeps:
  1. Let *doc* be a new document using `id`, `date` and `value` fields from *body*.
@@ -34,4 +34,4 @@ The server is always the master and it decides if the data being sent is valid o
  1. Replace the `value` and `date` fields of *doc* with the ones from *body*.
  2. Assign a new `seqid` to *doc* and save it.
  3. Return *doc.seqid*.
-8. If *doc.seqid* is different from *body.seqid*, return failure.
+8. If *doc.seqid* is different from *body.seqid*, return failure (409).

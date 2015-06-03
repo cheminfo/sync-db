@@ -24,7 +24,7 @@ The server is always the master and it decides if the data being sent is valid o
 1. Let *body* be the result of parsing the request data as a JSON.
 2. If parsing fails, return failure.
 3. If *body* is not an object, return failure.
-4. If *body.id* or *body.value* is not provided, return failure.
+4. If *body* does not contain `id`, `date` and `value` fields, return failure.
 5. Let *doc* be the result of searching a local document with *id*.
 6. If *doc* is null, run these substeps:
  1. Let *doc* be a new document using `id`, `date` and `value` fields from *body*.

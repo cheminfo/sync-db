@@ -29,9 +29,9 @@ The server is always the master and it decides if the data being sent is valid o
 6. If *doc* is null, run these substeps:
  1. Let *doc* be a new document using `id`, `date` and `value` fields from *body*.
  2. Assign a new `seqid` to *doc* and save it.
- 3. Return *doc.seqid*.
+ 3. Return `{ "seqid": doc.seqid }`.
 7. If *doc.seqid* is equal to *body.seqid*, run these substeps:
  1. Replace the `value` and `date` fields of *doc* with the ones from *body*.
  2. Assign a new `seqid` to *doc* and save it.
- 3. Return *doc.seqid*.
+ 3. Return `{ "seqid": doc.seqid }`.
 8. If *doc.seqid* is different from *body.seqid*, return failure (409).

@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/cheminfo/sync-db",
   "devDependencies": {
-    "mocha": "latest",
-    "mocha-better-spec-reporter": "latest",
-    "should": "latest",
-    "superagent-mock": "^1.0.0"
+    "mocha": "^2.2.5",
+    "mocha-better-spec-reporter": "^2.1.1",
+    "should": "^7.0.4",
+    "superagent-mock": "^1.3.0"
   },
   "dependencies": {
-    "superagent": "^1.2.0"
+    "superagent": "^1.3.0"
   }
 }

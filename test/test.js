@@ -22,7 +22,7 @@ describe('SyncDB', function () {
 
         dataSync.on('end', function (result) {
             result.inserted.should.equal(inserted);
-            info.should.be.true;
+            info.should.be.true();
             done();
         });
         dataSync.on('info', function () {

@@ -5,8 +5,14 @@ function FakeDriver() {
     this._data = [];
 }
 
-FakeDriver.prototype.getLastSeq = function () {
+FakeDriver.prototype.getLastSeqid = function () {
     return Promise.resolve(this._lastSeq);
+};
+
+FakeDriver.prototype.get = function (id) {
+    return Promise.resolve(this._data.find(function (el) {
+        return el.id === id;
+    }));
 };
 
 FakeDriver.prototype.getData = function () {
@@ -26,6 +32,10 @@ FakeDriver.prototype.insert = function (obj) {
     this._data.push(obj.value);
     this._lastSeq = obj.seqid;
     return Promise.resolve();
+};
+
+FakeDriver.prototype.getRevData = function () {
+    return Promise.resolve([]);
 };
 
 module.exports = FakeDriver;

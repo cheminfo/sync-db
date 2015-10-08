@@ -16,16 +16,16 @@ function SyncDB(options) {
 
     this._driver = options.driver;
     this._url = options.url ? options.url : '';
+    this._limit = options.limit || 5;
 
     this._exec = null;
 }
 
-SyncDB.prototype.sync = function (options) {
+SyncDB.prototype.sync = function () {
     if (this._exec) {
         return this._exec;
     }
-    options = options || {};
-    var exec = new Sync(this._driver, this._url, options.limit);
+    var exec = new Sync(this._driver, this._url, this._limit);
     this._exec = exec;
 
     var self = this;

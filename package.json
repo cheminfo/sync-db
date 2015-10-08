@@ -2,9 +2,12 @@
   "name": "sync-db",
   "version": "0.0.5",
   "description": "SyncDB core - easy synchronization of documents using a REST API",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "mocha --require should --reporter mocha-better-spec-reporter"
+    "test": "mocha --require should --reporter mocha-better-spec-reporter",
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build",
+    "pretest": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,7 @@
   },
   "homepage": "https://github.com/cheminfo/sync-db",
   "devDependencies": {
+    "babel": "^5.8.23",
     "mocha": "^2.2.5",
     "mocha-better-spec-reporter": "^2.1.1",
     "should": "^7.0.4",

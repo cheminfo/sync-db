@@ -14,8 +14,16 @@ Start a new synchronization with the server. If one is already in progress, retu
 
 ## SyncDB#insert(docID, document)
 
-Create a new document or update it if a document with the same ID already exists (locally).
+Create a new document or update it if a document with the same ID already exists.
 
 ## SyncDB#remove(docID)
 
-Remove a document (locally).
+Remove a document.
+
+## SyncDB#get(docID)
+
+Get a document by ID.
+
+## SyncDB#getData()
+
+Get an array with all documents.

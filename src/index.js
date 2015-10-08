@@ -1,41 +1,49 @@
 'use strict';
 
-var Sync = require('./sync');
+const Sync = require('./sync');
 
-function SyncDB(options) {
-    if (!(this instanceof SyncDB)) {
-        return new SyncDB(options);
+class SyncDB {
+    constructor(options) {
+        if (typeof options !== 'object' || options === null) {
+            throw new TypeError('options argument must be an object');
+        }
+        if (typeof options.driver !== 'object') {
+            throw new TypeError('driver option must be an object');
+        }
+
+        this._driver = options.driver;
+        this._url = options.url ? options.url : '';
+        this._limit = options.limit || 5;
+
+        this._exec = null;
     }
 
-    if (typeof options !== 'object' || options === null) {
-        throw new TypeError('options argument must be an object');
-    }
-    if (typeof options.driver !== 'object') {
-        throw new TypeError('driver option must be an object');
+    sync() {
+        if (this._exec) {
+            return this._exec;
+        }
+        const exec = new Sync(this._driver, this._url, this._limit);
+        this._exec = exec;
+
+        exec.then(() => {this._exec = null;});
+        return exec;
     }
 
-    this._driver = options.driver;
-    this._url = options.url ? options.url : '';
-    this._limit = options.limit || 5;
+    insert(docID, document) {
+        return this._driver.insert(docID, document);
+    }
 
-    this._exec = null;
+    remove(docID) {
+        return this._driver.remove(docID);
+    }
+
+    get(docID) {
+        return this._driver.get(docID);
+    }
+
+    getData() {
+        return this._driver.getData();
+    }
 }
-
-SyncDB.prototype.sync = function () {
-    if (this._exec) {
-        return this._exec;
-    }
-    var exec = new Sync(this._driver, this._url, this._limit);
-    this._exec = exec;
-
-    var self = this;
-
-    function remove() {
-        self._exec = null;
-    }
-
-    exec.then(remove);
-    return exec;
-};
 
 module.exports = SyncDB;

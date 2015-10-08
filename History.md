@@ -1,3 +1,10 @@
+0.1.0 / 2015-10-08
+==================
+
+* move limit to global options
+* support push (if no conflict)
+* add insert and clearDatabase
+
 0.0.5 / 2015-05-29
 ==================
 

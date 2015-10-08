@@ -30,19 +30,35 @@ class SyncDB {
     }
 
     insert(docID, document) {
-        return this._driver.insert(docID, document);
+        return this._driver.get(docID).then(doc => {
+            if (!doc) {
+                doc = {
+                    id: docID,
+                    seqid: -1
+                };
+            }
+            doc.revid = (doc.revid || 0) + 1;
+            doc.date = Date.now();
+            doc.value = document;
+            return this._driver.insert(document);
+        });
     }
 
     remove(docID) {
-        return this._driver.remove(docID);
+        throw new Error('unimplemented');
+        //return this._driver.remove(docID);
     }
 
     get(docID) {
-        return this._driver.get(docID);
+        return this._driver.get(docID).then(doc => doc.value);
     }
 
     getData() {
-        return this._driver.getData();
+        return this._driver.getData().then(docs => docs.map(doc => doc.value));
+    }
+
+    clearDatabase() {
+        return this._driver.clearDatabase();
     }
 }
 

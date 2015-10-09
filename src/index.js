@@ -40,12 +40,12 @@ class SyncDB {
             doc.revid = (doc.revid || 0) + 1;
             doc.date = Date.now();
             doc.value = document;
-            return this._driver.insert(document);
+            return this._driver.insert(doc);
         });
     }
 
     remove(docID) {
-        throw new Error('unimplemented');
+        throw new Error('remove is unimplemented');
         //return this._driver.remove(docID);
     }
 

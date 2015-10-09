@@ -17,7 +17,7 @@ class Sync extends EventEmitter {
         this._promise.catch(e => {
             // This check is needed, otherwise it will throw an exception if
             // there is no error listener
-            if (EventEmitter.listenerCount('error') > 0) {
+            if (this.listenerCount('error') > 0) {
                 this.emit('error', e);
             }
         });

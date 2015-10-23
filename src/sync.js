@@ -106,7 +106,7 @@ class Sync extends EventEmitter {
                         if (response.status !== 200) {
                             return this._fetch();
                         }
-                        toPush.seqid = response.seqid;
+                        toPush.seqid = response.body.seqid;
                         return this._insert(toPush).then(() => {
                             this._pushed++;
                             return pushNext();

@@ -72,15 +72,17 @@ class Sync extends EventEmitter {
                 value: data.value
             };
             if (doc && doc.seqid !== data.seqid) {
-                const docBackup = {
-                    id: doc.id,
-                    seqid: -1,
-                    revid: 0,
-                    date: doc.date,
-                    value: doc.value
-                };
-                return this._driver.insert(docBackup).then(() => {
-                    return this._driver.insert(toInsert);
+                return nextIDForConflict(doc.id, this._driver, 0).then((id) => {
+                    const docBackup = {
+                        id,
+                        seqid: -1,
+                        revid: 0,
+                        date: doc.date,
+                        value: doc.value
+                    };
+                    return this._driver.insert(docBackup).then(() => {
+                        return this._driver.insert(toInsert);
+                    });
                 });
             } else {
                 return this._driver.insert(toInsert);
@@ -131,3 +133,12 @@ class Sync extends EventEmitter {
 }
 
 module.exports = Sync;
+
+function nextIDForConflict(currentID, driver, it) {
+    if (it === undefined) it = 0;
+    const id = currentID + '_' + it;
+    return driver.get(id).then(function (data) {
+        if (!data) return id;
+        else return nextIDForConflict(currentID, driver, it++);
+    });
+}

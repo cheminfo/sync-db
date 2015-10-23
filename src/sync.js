@@ -139,6 +139,6 @@ function nextIDForConflict(currentID, driver, it) {
     const id = currentID + '_' + it;
     return driver.get(id).then(function (data) {
         if (!data) return id;
-        else return nextIDForConflict(currentID, driver, it++);
+        else return nextIDForConflict(currentID, driver, ++it);
     });
 }

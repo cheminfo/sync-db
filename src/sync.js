@@ -64,11 +64,6 @@ class Sync extends EventEmitter {
 
     _insert(data) {
         return this._driver.get(data.id).then(doc => {
-            if (doc && doc.seqid !== data.seqid) {
-                // todo resolve conflict
-                console.error(doc, data);
-                throw new Error('Conflict on fetch!!!');
-            }
             const toInsert = {
                 id: data.id,
                 seqid: data.seqid,
@@ -76,7 +71,20 @@ class Sync extends EventEmitter {
                 date: data.date,
                 value: data.value
             };
-            return this._driver.insert(toInsert);
+            if (doc && doc.seqid !== data.seqid) {
+                const docBackup = {
+                    id: doc.id,
+                    seqid: -1,
+                    revid: 0,
+                    date: doc.date,
+                    value: doc.value
+                };
+                return this._driver.insert(docBackup).then(() => {
+                    return this._driver.insert(toInsert);
+                });
+            } else {
+                return this._driver.insert(toInsert);
+            }
         });
     }
 
@@ -96,9 +104,7 @@ class Sync extends EventEmitter {
                     };
                     return agent.post(url).send(toPush).end().then(response => {
                         if (response.status !== 200) {
-                            // todo resolve conflict
-                            console.error(data, response);
-                            throw new Error('Conflict on push!!!')
+                            return this._fetch();
                         }
                         toPush.seqid = response.seqid;
                         return this._insert(toPush).then(() => {

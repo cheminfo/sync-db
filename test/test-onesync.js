@@ -1,16 +1,15 @@
 'use strict';
 
-require('./mock/server');
+var server = require('./mock/server');
 
 var SyncDB = require('..');
 var FakeDriver = require('./mock/driver');
 
 describe('One sync', function () {
-
-    it('should sync', function (done) {
+    it('should sync from scratch', function (done) {
         var mySync = new SyncDB({
             driver: new FakeDriver(),
-            url: 'http://localhost:6543/api/collection'
+            url: server.url
         });
 
         var inserted = 0;
@@ -20,11 +19,12 @@ describe('One sync', function () {
 
         dataSync.on('end', function (result) {
             result.inserted.should.equal(inserted);
-            info.should.be.true();
+            info.total.should.equal(4);
+            info.remaining.should.equal(4);
             done();
         });
-        dataSync.on('info', function () {
-            info = true;
+        dataSync.on('info', function (_info) {
+            info = _info;
         });
         dataSync.on('progress', function () {
             inserted++;
@@ -38,4 +38,31 @@ describe('One sync', function () {
 
     });
 
+    it('should sync remaining values', function (done) {
+        var mySync = new SyncDB({
+            driver: new FakeDriver(server.data.slice(0, 2)),
+            url: server.url
+        });
+
+        var inserted = 0;
+        var info = false;
+
+        var dataSync = mySync.sync();
+
+        dataSync.on('end', function (result) {
+            result.inserted.should.equal(inserted);
+            info.total.should.equal(4);
+            info.remaining.should.equal(2);
+            done();
+        });
+        dataSync.on('info', function (_info) {
+            info = _info;
+        });
+        dataSync.on('progress', function () {
+            inserted++;
+        });
+        dataSync.on('error', function (e) {
+            done(e);
+        });
+    });
 });

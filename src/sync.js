@@ -2,9 +2,11 @@
 
 const EventEmitter = require('events');
 const agent = require('./superagent');
+const debug = require('debug')('syncdb:sync');
 
 class Sync extends EventEmitter {
     constructor(driver, url, limit) {
+        debug('new sync');
         super();
         this._driver = driver;
         this._url = url;
@@ -25,6 +27,7 @@ class Sync extends EventEmitter {
     }
 
     _start() {
+        debug('start sync');
         // Get last local seqid
         return this._driver.getLastSeqid().then(id => {
             this._seqid = id;
@@ -38,6 +41,7 @@ class Sync extends EventEmitter {
     }
 
     _fetch() {
+        debug('_fetch');
         const url = `${this._url}?since=${this._seqid}&limit=${this._limit}`;
         return agent.get(url).end().then(response => {
             const result = response.body.data;
@@ -63,6 +67,7 @@ class Sync extends EventEmitter {
     }
 
     _insert(data) {
+        debug('_insert');
         return this._driver.get(data.id).then(doc => {
             const toInsert = {
                 id: data.id,
@@ -91,6 +96,7 @@ class Sync extends EventEmitter {
     }
 
     _push() {
+        debug('_push');
         return this._driver.getRevData().then((data) => {
             const url = `${this._url}/update`;
             let i = 0;
@@ -109,7 +115,7 @@ class Sync extends EventEmitter {
                             return this._fetch();
                         }
                         toPush.seqid = response.body.seqid;
-                        return this._insert(toPush).then(() => {
+                        return this._driver.insert(toPush).then(() => {
                             this._pushed++;
                             return pushNext();
                         });
@@ -123,6 +129,7 @@ class Sync extends EventEmitter {
     }
 
     _end() {
+        debug('end sync');
         var resInfo = {
             inserted: this._inserted,
             pushed: this._pushed

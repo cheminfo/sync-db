@@ -7,7 +7,7 @@ require('superagent-mock')(request, config);
 var SyncDB = require('..');
 var FakeDriver = require('./mock/driver');
 
-describe('SyncDB', function () {
+describe('One sync', function () {
 
     it('should sync', function (done) {
         var mySync = new SyncDB({

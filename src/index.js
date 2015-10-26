@@ -11,6 +11,8 @@ class SyncDB {
             throw new TypeError('driver option must be an object');
         }
 
+        this._onGet = options.onGet || defaultOnGet;
+
         this._driver = options.driver;
         this._url = options.url ? options.url : '';
         this._limit = options.limit || 5;
@@ -50,11 +52,11 @@ class SyncDB {
     }
 
     get(docID) {
-        return this._driver.get(docID).then(doc => doc.value);
+        return this._driver.get(docID).then(this._onGet);
     }
 
     getData() {
-        return this._driver.getData().then(docs => docs.map(doc => doc.value));
+        return this._driver.getData().then(docs => docs.map(this._onGet));
     }
 
     clearDatabase() {
@@ -63,3 +65,7 @@ class SyncDB {
 }
 
 module.exports = SyncDB;
+
+function defaultOnGet(dbObject) {
+    return dbObject.value;
+}

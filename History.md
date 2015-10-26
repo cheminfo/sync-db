@@ -1,3 +1,39 @@
+0.1.7 / 2015-10-26
+==================
+
+* add onGet callback
+* fix pull to not create a conflict all the time
+
+0.1.6 / 2015-10-23
+==================
+
+* fix infinite loop in nextIDForConflict
+
+0.1.5 / 2015-10-23
+==================
+
+* create new id in case of conflict
+
+0.1.4 / 2015-10-23
+==================
+
+* correctly set seqid after push
+
+0.1.3 / 2015-10-23
+==================
+
+* implement conflict handling
+
+0.1.2 / 2015-10-09
+==================
+
+* fix error emission in Sync
+
+0.1.1 / 2015-10-09
+==================
+
+* fix insert
+
 0.1.0 / 2015-10-08
 ==================
 

@@ -1,8 +1,6 @@
 'use strict';
 
-var request = require('superagent');
-var config = require('./mock/superagent');
-require('superagent-mock')(request, config);
+require('./mock/server');
 
 var SyncDB = require('..');
 var FakeDriver = require('./mock/driver');
@@ -12,7 +10,7 @@ describe('One sync', function () {
     it('should sync', function (done) {
         var mySync = new SyncDB({
             driver: new FakeDriver(),
-            url: '/api/collection'
+            url: 'http://localhost:6543/api/collection'
         });
 
         var inserted = 0;

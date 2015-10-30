@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/cheminfo/sync-db",
   "devDependencies": {
-    "babel": "^5.8.23",
+    "babel": "^6.0.12",
     "koa": "^1.1.1",
     "koa-bodyparser": "^2.0.1",
     "koa-router": "^5.2.3",

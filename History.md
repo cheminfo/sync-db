@@ -1,3 +1,8 @@
+0.1.8 / 2015-11-05
+==================
+
+* fix handling of conflict response from server
+
 0.1.7 / 2015-10-26
 ==================
 

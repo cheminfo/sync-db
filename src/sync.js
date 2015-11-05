@@ -111,14 +111,16 @@ class Sync extends EventEmitter {
                         value: obj.value
                     };
                     return agent.post(url).send(toPush).end().then(response => {
-                        if (response.status !== 200) {
-                            return this._fetch();
-                        }
                         toPush.seqid = response.body.seqid;
                         return this._driver.insert(toPush).then(() => {
                             this._pushed++;
                             return pushNext();
                         });
+                    }, e => {
+                        if (e.status === 409) {
+                            return this._fetch();
+                        }
+                        return Promise.reject(e);
                     });
                 } else {
                     return this._end();

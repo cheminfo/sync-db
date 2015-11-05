@@ -78,7 +78,8 @@ router.post('/update', function *() {
             debug(`update doc (id=${body.id}, seqid=${lastSeqId})`);
             this.body = {seqid: lastSeqId};
         } else {
-            throw new Error('conflict');
+            this.status = 409;
+            this.body = 'conflict';
         }
     }
 });

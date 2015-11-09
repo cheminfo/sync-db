@@ -37,7 +37,7 @@ router.get('/info', function *() {
         has++;
     }
     debug(`info (since ${since}): total=${total} remaining=${total - has}`);
-    this.body = {total, remaining: total - has};
+    this.body = {data: {total, remaining: total - has}};
 });
 
 router.get('/', function *() {
@@ -61,7 +61,7 @@ router.get('/', function *() {
     if (seqId === undefined) seqId = data[data.length - 1].seqid;
 
     debug(`get (since ${since}, limit ${limit}): ${result.length} results (lastSeqId: ${seqId})`);
-    this.body = {data: result, lastSeqId: seqId};
+    this.body = {data: result};
 });
 
 router.post('/update', function *() {
@@ -71,12 +71,12 @@ router.post('/update', function *() {
         data.push(body);
         body.seqid = ++lastSeqId;
         debug(`insert new doc (id=${body.id}, seqid=${lastSeqId})`);
-        this.body = {seqid: lastSeqId};
+        this.body = {data: {seqid: lastSeqId}};
     } else {
         if (doc.seqid === body.seqid) {
             doc.seqid = ++lastSeqId;
             debug(`update doc (id=${body.id}, seqid=${lastSeqId})`);
-            this.body = {seqid: lastSeqId};
+            this.body = {data: {seqid: lastSeqId}};
         } else {
             this.status = 409;
             this.body = 'conflict';

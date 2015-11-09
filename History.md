@@ -1,3 +1,8 @@
+0.2.0 / 2015-11-09
+==================
+
+* all responses from the server must have a "data" property
+
 0.1.8 / 2015-11-05
 ==================
 

@@ -1,6 +1,6 @@
 {
   "name": "sync-db",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "description": "SyncDB core - easy synchronization of documents using a REST API",
   "main": "lib/index.js",
   "scripts": {

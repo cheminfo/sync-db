@@ -30,7 +30,7 @@
   "homepage": "https://github.com/cheminfo/sync-db",
   "devDependencies": {
     "babel-cli": "^6.1.2",
-    "babel-preset-es2015": "^6.1.2",
+    "babel-preset-es2015": "^6.1.4",
     "koa": "^1.1.1",
     "koa-bodyparser": "^2.0.1",
     "koa-router": "^5.2.3",

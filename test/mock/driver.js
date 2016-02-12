@@ -47,6 +47,16 @@ FakeDriver.prototype.insert = function (obj) {
     return Promise.resolve();
 };
 
+FakeDriver.prototype.remove = function (id) {
+    for (var i = 0; i < this._data.length; i++) {
+        if (this._data[i].id === id) {
+            this._data.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+};
+
 FakeDriver.prototype.getRevData = function () {
     var revdata = [];
     for (var obj of this._data) {

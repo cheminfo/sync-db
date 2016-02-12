@@ -12,6 +12,7 @@ class Sync extends EventEmitter {
         this._url = url;
         this._seqid = 0;
         this._inserted = 0;
+        this._deleted = 0;
         this._pushed = 0;
         this._limit = limit;
 
@@ -46,21 +47,21 @@ class Sync extends EventEmitter {
         if (result.length === 0) {
             return await this._push();
         }
-        let i = 0;
-        const insertNext = () => {
-            if (result.length > i) {
-                const res = result[i++];
-                return this._insert(res).then(() => {
-                    this._seqid = res.seqid;
-                    this._inserted++;
-                    this.emit('progress', res);
-                    return insertNext();
-                });
+        for (let i = 0; i < result.length; i++) {
+            const res = result[i++];
+            if (res.action === 'update') {
+                await this._insert(res);
+                this._inserted++;
+            } else if (res.action === 'delete') {
+                await this._delete(res);
+                this._deleted++;
             } else {
-                return this._fetch();
+                throw new Error('unexpected action: ' + res.action);
             }
-        };
-        return await insertNext();
+            this._seqid = res.seqid;
+            this.emit('progress', res);
+        }
+        return await this._fetch();
     }
 
     async _insert(data) {
@@ -87,6 +88,10 @@ class Sync extends EventEmitter {
         } else {
             return await this._driver.insert(toInsert);
         }
+    }
+
+    async _delete(data) {
+        await this._driver.remove(data.id);
     }
 
     _push() {
@@ -128,6 +133,7 @@ class Sync extends EventEmitter {
         debug('end sync');
         var resInfo = {
             inserted: this._inserted,
+            deleted: this._deleted,
             pushed: this._pushed
         };
         this.emit('end', resInfo);

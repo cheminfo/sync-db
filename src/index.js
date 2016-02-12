@@ -47,8 +47,7 @@ class SyncDB {
     }
 
     remove(docID) {
-        throw new Error('remove is unimplemented');
-        //return this._driver.remove(docID);
+        return this._driver.remove(docID);
     }
 
     get(docID) {

@@ -26,73 +26,67 @@ class Sync extends EventEmitter {
         this.then = this._promise.then.bind(this._promise);
     }
 
-    _start() {
+    async _start() {
         debug('start sync');
         // Get last local seqid
-        return this._driver.getLastSeqid().then(id => {
-            this._seqid = id;
-            const infoUrl = `${this._url}/info?since=${id}`;
-            // Get remaining sync steps from server
-            return agent.get(infoUrl).end().then(result => {
-                this.emit('info', result.body.data);
-                return this._fetch();
-            });
-        });
+        const id = await this._driver.getLastSeqid();
+        this._seqid = id;
+        const infoUrl = `${this._url}/info?since=${id}`;
+        // Get remaining sync steps from server
+        const result = await agent.get(infoUrl).end();
+        this.emit('info', result.body.data);
+        return await this._fetch();
     }
 
-    _fetch() {
+    async _fetch() {
         debug('_fetch');
         const url = `${this._url}?since=${this._seqid}&limit=${this._limit}`;
-        return agent.get(url).end().then(response => {
-            const result = response.body.data;
-            if (result.length === 0) {
-                return this._push();
-            }
-            let i = 0;
-            const insertNext = () => {
-                if (result.length > i) {
-                    const res = result[i++];
-                    return this._insert(res).then(() => {
-                        this._seqid = res.seqid;
-                        this._inserted++;
-                        this.emit('progress', res);
-                        return insertNext();
-                    });
-                } else {
-                    return this._fetch();
-                }
-            };
-            return insertNext();
-        });
-    }
-
-    _insert(data) {
-        debug('_insert');
-        return this._driver.get(data.id).then(doc => {
-            const toInsert = {
-                id: data.id,
-                seqid: data.seqid,
-                revid: 0,
-                date: data.date,
-                value: data.value
-            };
-            if (doc && doc.seqid !== data.seqid) {
-                return nextIDForConflict(doc.id, this._driver, 0).then((id) => {
-                    const docBackup = {
-                        id,
-                        seqid: -1,
-                        revid: 0,
-                        date: doc.date,
-                        value: doc.value
-                    };
-                    return this._driver.insert(docBackup).then(() => {
-                        return this._driver.insert(toInsert);
-                    });
+        const response = await agent.get(url).end();
+        const result = response.body.data;
+        if (result.length === 0) {
+            return await this._push();
+        }
+        let i = 0;
+        const insertNext = () => {
+            if (result.length > i) {
+                const res = result[i++];
+                return this._insert(res).then(() => {
+                    this._seqid = res.seqid;
+                    this._inserted++;
+                    this.emit('progress', res);
+                    return insertNext();
                 });
             } else {
-                return this._driver.insert(toInsert);
+                return this._fetch();
             }
-        });
+        };
+        return await insertNext();
+    }
+
+    async _insert(data) {
+        debug('_insert');
+        const doc = await this._driver.get(data.id);
+        const toInsert = {
+            id: data.id,
+            seqid: data.seqid,
+            revid: 0,
+            date: data.date,
+            value: data.value
+        };
+        if (doc && doc.seqid !== data.seqid) {
+            const id = await nextIDForConflict(doc.id, this._driver, 0);
+            const docBackup = {
+                id,
+                seqid: -1,
+                revid: 0,
+                date: doc.date,
+                value: doc.value
+            };
+            await this._driver.insert(docBackup);
+            return await this._driver.insert(toInsert);
+        } else {
+            return await this._driver.insert(toInsert);
+        }
     }
 
     _push() {
@@ -143,11 +137,10 @@ class Sync extends EventEmitter {
 
 module.exports = Sync;
 
-function nextIDForConflict(currentID, driver, it) {
+async function nextIDForConflict(currentID, driver, it) {
     if (it === undefined) it = 0;
     const id = currentID + '_' + it;
-    return driver.get(id).then(function (data) {
-        if (!data) return id;
-        else return nextIDForConflict(currentID, driver, ++it);
-    });
+    const data = await driver.get(id);
+    if (!data) return id;
+    else return await nextIDForConflict(currentID, driver, ++it);
 }

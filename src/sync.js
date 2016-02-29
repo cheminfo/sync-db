@@ -48,7 +48,7 @@ class Sync extends EventEmitter {
             return await this._push();
         }
         for (let i = 0; i < result.length; i++) {
-            const res = result[i++];
+            const res = result[i];
             if (res.action === 'update') {
                 await this._insert(res);
                 this._inserted++;

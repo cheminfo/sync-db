@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/cheminfo/sync-db",
   "devDependencies": {
-    "babel-cli": "^6.5.1",
+    "babel-cli": "^6.8.0",
     "babel-plugin-transform-async-to-generator": "^6.5.0",
     "babel-plugin-transform-es2015-destructuring": "^6.5.0",
     "koa": "^1.1.1",

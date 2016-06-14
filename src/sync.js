@@ -35,7 +35,7 @@ class Sync extends EventEmitter {
         const infoUrl = `${this._url}/info?since=${id}`;
         // Get remaining sync steps from server
         const result = await agent.get(infoUrl).withCredentials().end();
-        this.emit('info', result.body.data);
+        this.emit('info', result.body);
         return await this._fetch();
     }
 
@@ -110,7 +110,7 @@ class Sync extends EventEmitter {
                         value: obj.value
                     };
                     return agent.post(url).send(toPush).withCredentials().end().then(response => {
-                        toPush.seqid = response.body.data.seqid;
+                        toPush.seqid = response.body.seqid;
                         return this._driver.insert(toPush).then(() => {
                             this._pushed++;
                             return pushNext();

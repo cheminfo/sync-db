@@ -66,6 +66,10 @@ class Sync extends EventEmitter {
 
     async _insert(data) {
         debug('_insert');
+        if (!data.seqid) {
+            // data must have a seqid
+            throw new Error('got data without seqid: ' + JSON.stringify(data));
+        }
         const doc = await this._driver.get(data.id);
         const toInsert = {
             id: data.id,
@@ -74,18 +78,32 @@ class Sync extends EventEmitter {
             date: data.date,
             value: data.value
         };
-        if (doc && doc.seqid !== data.seqid) {
-            const id = await nextIDForConflict(doc.id, this._driver, 0);
-            const docBackup = {
-                id,
-                seqid: -1,
-                revid: 0,
-                date: doc.date,
-                value: doc.value
-            };
-            await this._driver.insert(docBackup);
-            return await this._driver.insert(toInsert);
+        if (doc) {
+            // doc exists locally
+            if (doc.seqid === data.seqid) {
+                // same seqid. we already got this value. nothing to do
+                return;
+            } else if (doc.seqid > data.seqid) {
+                // seqid is maintained by the server and can only become bigger
+                throw new Error(`got data with unexpected seqid ${data.seqid} lower than current ${doc.seqid}`);
+            } else {
+                // seqid is bigger than local. update needed
+                if (doc.revid > 0) {
+                    // conflict: data changed both locally and on the server
+                    const id = await nextIDForConflict(doc.id, this._driver, 0);
+                    const docBackup = {
+                        id,
+                        seqid: -1,
+                        revid: 0,
+                        date: doc.date,
+                        value: doc.value
+                    };
+                    await this._driver.insert(docBackup);
+                }
+                return await this._driver.insert(toInsert);
+            }
         } else {
+            // doc does not exist locally. just insert
             return await this._driver.insert(toInsert);
         }
     }

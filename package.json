@@ -37,11 +37,11 @@
     "koa-router": "^5.4.0",
     "mocha": "^2.4.5",
     "mocha-better-spec-reporter": "^3.0.0",
-    "should": "^8.2.2"
+    "should": "^9.0.2"
   },
   "dependencies": {
     "debug": "^2.2.0",
-    "superagent": "^1.7.2",
+    "superagent": "^2.0.0",
     "superagent-promise": "^1.1.0"
   }
 }

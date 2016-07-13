@@ -25,7 +25,7 @@ describe('One sync with insert', function () {
                 data.value.field1.should.equal('value6');
                 return mySync.sync().then(function () {
                     return driver.get('6').then(function (data) {
-                        data.seqid.should.equal(8);
+                        data.seqid.should.equal(32);
                     });
                 });
             });

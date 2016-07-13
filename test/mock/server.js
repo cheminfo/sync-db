@@ -13,14 +13,14 @@ let lastSeqId;
 exports.init = function () {
     debug('init');
     data = [
-        {seqid: 1, id: '1', action: 'update', value: {field1: 'value1'}},
-        {seqid: 2, id: '2', action: 'update', value: {field1: 'value2'}},
-        {seqid: 3, id: '3', action: 'update', value: {field1: 'value3'}},
-        {seqid: 6, id: '4', action: 'update', value: {field1: 'value4'}}
+        {seqid: 7, id: '1', action: 'update', value: {field1: 'value1'}},
+        {seqid: 9, id: '2', action: 'update', value: {field1: 'value2'}},
+        {seqid: 15, id: '3', action: 'update', value: {field1: 'value3'}},
+        {seqid: 30, id: '4', action: 'update', value: {field1: 'value4'}}
     ];
     exports.data = JSON.parse(JSON.stringify(data));
 
-    lastSeqId = 6;
+    lastSeqId = 30;
 };
 
 const app = new Koa();

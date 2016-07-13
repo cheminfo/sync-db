@@ -112,39 +112,38 @@ class Sync extends EventEmitter {
         await this._driver.remove(data.id);
     }
 
-    _push() {
+    async _push() {
         debug('_push');
-        return this._driver.getRevData().then((data) => {
-            const url = `${this._url}/update`;
-            let i = 0;
-            const pushNext = () => {
-                if (data.length > i) {
-                    const obj = data[i++];
-                    const toPush = {
-                        id: obj.id,
-                        seqid: obj.seqid,
-                        date: obj.date,
-                        state: 'update',
-                        value: obj.value
-                    };
-                    return agent.post(url).send(toPush).withCredentials().end().then(response => {
-                        toPush.seqid = response.body.seqid;
-                        return this._driver.insert(toPush).then(() => {
-                            this._pushed++;
-                            return pushNext();
-                        });
-                    }, e => {
-                        if (e.status === 409) {
-                            return this._fetch();
-                        }
-                        return Promise.reject(e);
-                    });
-                } else {
-                    return this._end();
-                }
+        const data = await this._driver.getRevData();
+        const url = `${this._url}/update`;
+        for (let i = 0; i < data.length; i++) {
+            const obj = data[i];
+            const toPush = {
+                id: obj.id,
+                seqid: obj.seqid,
+                date: obj.date,
+                state: 'update',
+                value: obj.value
             };
-            return pushNext();
-        });
+            let response;
+            try {
+                response = await agent.post(url).send(toPush).withCredentials().end();
+            } catch (e) {
+                if (e.status === 409) {
+                    await this._fetch();
+                } else {
+                    throw e;
+                }
+            }
+            if (response.body.seqid) {
+                toPush.seqid = response.body.seqid;
+                await this._driver.insert(toPush);
+                this._pushed++;
+            } else {
+                throw new Error('no seqid in response from server: ' + JSON.stringify(response.body));
+            }
+        }
+        return this._end();
     }
 
     _end() {

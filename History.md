@@ -1,3 +1,13 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/cheminfo/sync-db/compare/v0.3.0...v0.3.1) (2016-07-13)
+
+
+### Bug Fixes
+
+* don't interpret all new data as a conflict ([d277eed](https://github.com/cheminfo/sync-db/commit/d277eed))
+
+
+
 0.2.0 / 2015-11-09
 ==================
 

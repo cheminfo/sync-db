@@ -35,7 +35,7 @@
     "koa": "^1.1.1",
     "koa-bodyparser": "^2.0.1",
     "koa-router": "^5.4.0",
-    "mocha": "^2.4.5",
+    "mocha": "^2.5.0",
     "mocha-better-spec-reporter": "^3.0.0",
     "should": "^9.0.2"
   },
